@@ -23,6 +23,6 @@ export class TaskService {
     this.tasks.push(task);
   }
   delTask(idT:number): void {
-    delete this.tasks[idT];
+    this.tasks.splice(idT,1);
   }
 }
