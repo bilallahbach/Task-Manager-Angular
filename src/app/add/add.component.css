@@ -40,4 +40,13 @@
 }
 table {
     margin-top: 70px;
+    text-align: center;
+}
+
+.disabled {
+    text-decoration: line-through;
+    background-color: gainsboro;
+}
+.disabled td{
+    background-color: rgb(235, 235, 235);
 }

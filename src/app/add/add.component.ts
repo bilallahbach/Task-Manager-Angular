@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './add.component.css'
 })
 export class AddComponent {
-  tasks: {name:string,type:string}[] = [];
+  tasks: {name:string,type:string,done:boolean}[] = [];
   constructor(private taskService: TaskService) {}
   taskName: string = "";
   taskType: string = "";
@@ -24,7 +24,7 @@ export class AddComponent {
     }
   submitForm() {
     if(this.taskName && this.taskType){
-      this.taskService.addTask({...{name:this.taskName,type:this.taskType}});
+      this.taskService.addTask({...{name:this.taskName,type:this.taskType,done:false}});
     this.taskName = "";
     this.taskType = "";
     }
@@ -32,4 +32,10 @@ export class AddComponent {
   deleteTask(idTask:number){
     this.taskService.delTask(idTask);
   }
+  isDisabled: boolean = false;
+
+  toggleClass(index: number) {
+    this.tasks[index].done = !this.tasks[index].done; // Toggle disabled state for the clicked task
+  }
+
 }

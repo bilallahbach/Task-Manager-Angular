@@ -10,7 +10,7 @@ import { TaskService, Task } from '../task.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit{
-  tasksList: {name:string , type:string}[] = [];
+  tasksList: {name:string , type:string,done:boolean}[] = [];
 
   constructor(private taskService: TaskService) {}
 

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 export interface Task {
   name: string;
   type: string;
+  done: boolean;
 }
 
 @Injectable({
@@ -11,8 +12,8 @@ export interface Task {
 })
 export class TaskService {
   private tasks: Task[] = [
-    { name: 'Task 1', type: 'easy' },
-    { name: 'Task 2', type: 'medium' }
+    { name: 'Task 1', type: 'easy',done:true },
+    { name: 'Task 2', type: 'medium', done:false }
   ];
 
   getTasks(): Task[] {
