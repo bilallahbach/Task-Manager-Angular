@@ -1,41 +1,64 @@
-import { Component, SimpleChanges } from '@angular/core';
-import { FormsModule } from '@angular/forms';  // Import FormsModule for ngModel
-import { TaskService } from '../task.service';
+import { Component } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add',
-  imports: [FormsModule,CommonModule],
+  standalone: true,
+  imports: [FormsModule, HttpClientModule, CommonModule],
   templateUrl: './add.component.html',
   styleUrl: './add.component.css'
 })
 export class AddComponent {
-  tasks: {name:string,type:string,done:boolean}[] = [];
-  constructor(private taskService: TaskService) {}
-  taskName: string = "";
-  taskType: string = "";
+  tasks: any[] = [];
+  taskName: string = '';
+  taskType: string = '';
+
+  constructor(private http: HttpClient) {}
+
   ngOnInit() {
-    this.tasks = this.taskService.getTasks();
+    this.fetchTasks();
   }
-    ngOnChanges(changes: SimpleChanges) {
-      if (changes['tasksList']) {
-        this.tasks = this.taskService.getTasks();
-      }
-    }
+
+  fetchTasks() {
+    this.http.get('http://localhost:8080/api/tasks').subscribe((data: any) => {
+      this.tasks = data;
+    }, error => {
+      console.error('Error fetching tasks:', error);
+    });
+  }
+
   submitForm() {
-    if(this.taskName && this.taskType){
-      this.taskService.addTask({...{name:this.taskName,type:this.taskType,done:false}});
-    this.taskName = "";
-    this.taskType = "";
+    if (this.taskName && this.taskType) {
+      const newTask = { title: this.taskName, type: this.taskType, done: false };
+      this.http.post('http://localhost:8080/api/tasks', newTask).subscribe(() => {
+        this.fetchTasks();
+        this.taskName = '';
+        this.taskType = '';
+      }, error => {
+        console.error('Error adding task:', error);
+      });
     }
   }
-  deleteTask(idTask:number){
-    this.taskService.delTask(idTask);
-  }
-  isDisabled: boolean = false;
 
-  toggleClass(index: number) {
-    this.tasks[index].done = !this.tasks[index].done; // Toggle disabled state for the clicked task
+  deleteTask(id: number) {
+    this.http.delete(`http://localhost:8080/api/tasks/${id}`).subscribe(() => {
+      this.fetchTasks();
+    }, error => {
+      console.error('Error deleting task:', error);
+    });
   }
 
+  toggleClass(id: number) {
+    const task = this.tasks.find(t => t.id === id);
+    if (task) {
+      task.done = !task.done;
+      this.http.put(`http://localhost:8080/api/tasks/${id}`, task).subscribe(() => {
+        this.fetchTasks();
+      }, error => {
+        console.error('Error updating task:', error);
+      });
+    }
+  }
 }
